@@ -36,7 +36,7 @@ Following the guidelines in [DESIGN.md](DESIGN.md), the user interface is optimi
 
 ## 📁 Repository Structure
 
-*   [code.html](code.html): The core dashboard implementation with responsive Tailwind styling and embedded custom styles.
+*   [index.html](index.html): The core dashboard implementation with responsive Tailwind styling and embedded custom styles.
 *   [DESIGN.md](DESIGN.md): Detailed specifications for brand, color palette, typography, layout, spacing, elevation, and component behaviors.
 *   [README.md](README.md): This documentation file.
 
@@ -52,4 +52,4 @@ Following the guidelines in [DESIGN.md](DESIGN.md), the user interface is optimi
 
 ## 📖 How to Run
 
-Simply open [code.html](code.html) in any modern web browser to view the interactive student dashboard prototype.
+Simply open [index.html](index.html) in any modern web browser to view the interactive student dashboard prototype.
