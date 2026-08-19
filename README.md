@@ -4,6 +4,8 @@ Saksham Learn is a premium, accessible e-learning platform tailored specifically
 
 This repository contains the interactive prototype and design guidelines for the Saksham Learn student dashboard.
 
+**🔗 Live Demo:** [https://saksham-learn.vercel.app/](https://saksham-learn.vercel.app/)
+
 ---
 
 ## 🚀 Key Features
@@ -52,4 +54,5 @@ Following the guidelines in [DESIGN.md](DESIGN.md), the user interface is optimi
 
 ## 📖 How to Run
 
-Simply open [index.html](index.html) in any modern web browser to view the interactive student dashboard prototype.
+*   **Live Demo:** Access the live application at [saksham-learn.vercel.app](https://saksham-learn.vercel.app/).
+*   **Local Execution:** Open [index.html](index.html) in any modern web browser to run the prototype locally.
