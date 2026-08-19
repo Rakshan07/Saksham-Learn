@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saksham Learn - Student Dashboard</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config injected via Script as per instructions -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#7b4c00",
+                      "on-error-container": "#93000a",
+                      "surface-container-high": "#dfe9fa",
+                      "surface-container": "#e5eeff",
+                      "background": "#f8f9ff",
+                      "on-primary-fixed-variant": "#004a79",
+                      "surface-tint": "#296292",
+                      "primary-container": "#1e5a8a",
+                      "surface": "#f8f9ff",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-container": "#ffc075",
+                      "on-tertiary-fixed-variant": "#663e00",
+                      "tertiary-fixed-dim": "#fbba6a",
+                      "primary-fixed": "#cfe5ff",
+                      "secondary-fixed-dim": "#ffb780",
+                      "surface-variant": "#d9e3f4",
+                      "surface-container-highest": "#d9e3f4",
+                      "outline-variant": "#c1c7d0",
+                      "surface-dim": "#d1dbec",
+                      "inverse-surface": "#27313e",
+                      "on-primary-container": "#a6d0ff",
+                      "on-tertiary-fixed": "#2b1700",
+                      "on-error": "#ffffff",
+                      "primary": "#00426d",
+                      "inverse-on-surface": "#eaf1ff",
+                      "tertiary-fixed": "#ffddb8",
+                      "secondary-fixed": "#ffdcc4",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed": "#001d34",
+                      "inverse-primary": "#9acbff",
+                      "secondary-container": "#ffab69",
+                      "on-secondary-fixed-variant": "#6f3800",
+                      "on-secondary-fixed": "#2f1400",
+                      "secondary": "#8e4e14",
+                      "on-secondary": "#ffffff",
+                      "surface-container-low": "#eef4ff",
+                      "on-surface": "#121c28",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-container": "#783d01",
+                      "tertiary": "#5b3700",
+                      "primary-fixed-dim": "#9acbff",
+                      "on-primary": "#ffffff",
+                      "on-surface-variant": "#41474f",
+                      "outline": "#727780",
+                      "error-container": "#ffdad6",
+                      "on-background": "#121c28",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "card-padding": "16px",
+                      "gutter": "16px",
+                      "touch-target-min": "48px",
+                      "container-margin": "20px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "label-lg": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["22px", {"lineHeight": "28px", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Base styles to ensure consistency and prevent text selection on interactive elements */
+        body {
+            -webkit-tap-highlight-color: transparent;
+            background-color: theme('colors.background');
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for web view */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: theme('colors.background');
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: theme('borderRadius.full');
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col relative selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top App Bar (From Shared Components JSON) -->
+<header class="flex justify-between items-center px-container-margin h-[64px] w-full fixed top-0 z-50 bg-surface border-b border-outline-variant shadow-sm transition-colors">
+<!-- Leading Action -->
+<button aria-label="Menu" class="w-[48px] h-[48px] flex items-center justify-center text-primary hover:bg-surface-container-low transition-colors rounded-full active:scale-95 duration-100 ease-in-out">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<!-- Headline -->
+<h1 class="text-headline-md font-headline-md font-bold text-primary truncate px-2">Saksham Learn</h1>
+<!-- Trailing Action -->
+<button class="px-2 h-[48px] flex items-center justify-center text-label-lg font-label-lg text-primary hover:bg-surface-container-low transition-colors rounded-full active:scale-95 duration-100 ease-in-out whitespace-nowrap">
+            EN/HI
+        </button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-[80px] pb-[100px] px-container-margin w-full max-w-4xl mx-auto flex flex-col gap-[24px]">
+<!-- Greeting & Context Header -->
+<section class="flex justify-between items-end">
+<div>
+<p class="text-body-md font-body-md text-on-surface-variant">Good Morning,</p>
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Rohan</h2>
+</div>
+<!-- Offline Indicator Badge (Educational Specialty) -->
+<div class="flex items-center gap-1.5 bg-surface-variant text-on-surface-variant px-3 py-1.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
+<span class="material-symbols-outlined text-[16px]" data-icon="cloud_off">cloud_off</span>
+<span class="text-label-md font-label-md">Offline</span>
+</div>
+</section>
+<!-- Prominent Voice Search Bar -->
+<section class="relative w-full shadow-[0_2px_8px_rgba(0,0,0,0.05)] rounded-full bg-surface-container-lowest border border-outline-variant/30 overflow-hidden flex items-center h-[56px] px-4 group hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300">
+<span class="material-symbols-outlined text-on-surface-variant mr-3 shrink-0" data-icon="search">search</span>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant/70 h-full w-full outline-none" placeholder="Ask a doubt or search topics..." type="text"/>
+<!-- Voice Input Button (Pulsing interaction cue) -->
+<button aria-label="Voice Search" class="w-[40px] h-[40px] rounded-full bg-primary-container text-on-primary-container flex items-center justify-center active:scale-90 transition-transform relative shrink-0">
+<span class="absolute inset-0 rounded-full bg-primary-container animate-ping opacity-40 duration-1000"></span>
+<span class="material-symbols-outlined relative z-10" data-icon="mic" data-weight="fill" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+</section>
+<!-- Hero: Continue Learning Card (Level 2 Elevation) -->
+<section aria-label="Resume Grade 8 Math Fractions" class="bg-primary-container rounded-xl p-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] relative overflow-hidden flex flex-col gap-4 group cursor-pointer" role="button">
+<!-- Decorative atmospheric blur -->
+<div class="absolute -right-12 -top-12 w-40 h-40 bg-inverse-primary opacity-20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex justify-between items-start relative z-10 w-full">
+<div class="bg-surface/20 text-on-primary-container px-2.5 py-1 rounded text-label-md font-label-md backdrop-blur-sm flex items-center gap-1.5 border border-on-primary-container/10">
+<span class="material-symbols-outlined text-[14px]" data-icon="play_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+                    Continue Learning
+                </div>
+<button aria-label="Save Topic" class="w-[32px] h-[32px] flex items-center justify-center rounded-full hover:bg-surface/10 text-on-primary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</button>
+</div>
+<div class="relative z-10 mt-1">
+<h3 class="text-headline-md font-headline-md text-on-primary-container mb-1 tracking-tight">Fractions &amp; Decimals</h3>
+<p class="text-body-md font-body-md text-on-primary-container/80">Grade 8 • Mathematics</p>
+</div>
+<div class="flex items-center gap-3 mt-1 relative z-10">
+<div aria-valuemax="100" aria-valuemin="0" aria-valuenow="65" class="flex-1 h-2 bg-surface/20 rounded-full overflow-hidden" role="progressbar">
+<div class="h-full bg-primary w-[65%] rounded-full transition-all duration-1000 ease-out"></div>
+</div>
+<span class="text-label-md font-label-md text-on-primary-container font-bold">65%</span>
+</div>
+<button class="mt-2 w-full h-[48px] bg-primary text-on-primary rounded-lg text-label-lg font-label-lg flex justify-center items-center gap-2 shadow-sm group-active:bg-surface-tint group-active:scale-[0.98] transition-all relative z-10">
+                Resume Topic 
+                <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</section>
+<!-- Bento Grid: Gamification & Subjects -->
+<section class="grid grid-cols-2 gap-[16px]">
+<!-- Daily Streak Counter (Level 1 Elevation) -->
+<div class="col-span-2 bg-surface-container-lowest rounded-xl p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-outline-variant/20 flex items-center gap-4">
+<div class="w-[56px] h-[56px] rounded-full bg-[#FFF3E0] flex items-center justify-center shrink-0 shadow-inner">
+<span class="material-symbols-outlined text-[32px] text-[#F57C00]" data-icon="local_fire_department" data-weight="fill" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div class="flex-1">
+<div class="flex items-baseline gap-2">
+<h4 class="text-headline-sm font-headline-sm text-on-surface">5 Day Streak!</h4>
+<span class="text-label-md font-label-md text-secondary">Awesome</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant mt-0.5">Complete 1 more lesson today to maintain.</p>
+</div>
+</div>
+<!-- Subject Area Header -->
+<div class="col-span-2 flex justify-between items-center mt-2 mb-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Your Subjects</h3>
+<button class="text-label-lg font-label-lg text-primary hover:underline px-2 py-1 -mr-2">View All</button>
+</div>
+<!-- Subject Card: Math (Glassmorphism hint) -->
+<button class="bg-surface-container-low rounded-xl p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col items-start gap-3 active:scale-[0.96] transition-transform relative overflow-hidden group text-left w-full h-[140px] border border-outline-variant/10 hover:bg-surface-container">
+<div class="w-[44px] h-[44px] rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-1">
+<span class="material-symbols-outlined text-[24px]" data-icon="calculate" data-weight="fill" style="font-variation-settings: 'FILL' 1;">calculate</span>
+</div>
+<div class="relative z-10">
+<h4 class="text-label-lg font-label-lg text-on-surface">Mathematics</h4>
+<p class="text-label-md font-label-md text-on-surface-variant mt-1">4 Pending</p>
+</div>
+<!-- Tactile large icon in background -->
+<div class="absolute -bottom-6 -right-6 w-24 h-24 opacity-[0.03] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 pointer-events-none">
+<span class="material-symbols-outlined text-[100px]" data-icon="functions">functions</span>
+</div>
+</button>
+<!-- Subject Card: Science -->
+<button class="bg-surface-container-low rounded-xl p-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col items-start gap-3 active:scale-[0.96] transition-transform relative overflow-hidden group text-left w-full h-[140px] border border-outline-variant/10 hover:bg-surface-container">
+<div class="w-[44px] h-[44px] rounded-lg bg-[#E8F5E9] flex items-center justify-center text-[#2E7D32] mb-1">
+<span class="material-symbols-outlined text-[24px]" data-icon="science" data-weight="fill" style="font-variation-settings: 'FILL' 1;">science</span>
+</div>
+<div class="relative z-10">
+<h4 class="text-label-lg font-label-lg text-on-surface">Science</h4>
+<p class="text-label-md font-label-md text-on-surface-variant mt-1">Physics Intro</p>
+</div>
+<div class="absolute -bottom-6 -right-6 w-24 h-24 opacity-[0.03] group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-500 pointer-events-none">
+<span class="material-symbols-outlined text-[100px]" data-icon="biotech">biotech</span>
+</div>
+</button>
+<!-- Subject Card: English (Wide Asymmetric Bento Item) -->
+<button class="col-span-2 h-[130px] bg-surface-container-low rounded-xl p-0 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex active:scale-[0.98] transition-transform overflow-hidden relative group text-left border border-outline-variant/10 hover:bg-surface-container">
+<div class="flex-1 p-[16px] flex flex-col justify-center relative z-10">
+<div class="w-[36px] h-[36px] mb-2 rounded-lg bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]" data-icon="book" data-weight="fill" style="font-variation-settings: 'FILL' 1;">book</span>
+</div>
+<h4 class="text-label-lg font-label-lg text-on-surface">English Language</h4>
+<p class="text-label-md font-label-md text-on-surface-variant mt-0.5">Grammar • Chapter 4</p>
+</div>
+<!-- Image container with mask -->
+<div class="w-[140px] h-full relative bg-tertiary-container/5 border-l border-outline-variant/10 overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-low to-transparent z-10 w-8 group-hover:w-4 transition-all"></div>
+<img class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-70 group-hover:scale-105 group-hover:opacity-90 transition-all duration-700" data-alt="A bright, cheerful, modern 3D illustration of an open textbook with floating glowing letters, punctuation marks, and soft grammar symbols surrounding it. The setting is against a soft warm peach and orange gradient background, bathed in soft studio lighting. The overall visual style is friendly, educational, and clean, perfectly fitting a modern e-learning application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcpjaWB3aXJzUDQ4rzxPTyfIipl-qQlloh3vylBT4QBFIKHBis9imoWTCH8LWujQU1q7I2X3udzTzOost7t2s2xjjX4VMxAL0a-aThU-VV-Vxe--tnZDyqCs2D1Wj_VG7U63aotc_m0vMZjD-InWPYLu-GxtXn7HfrO01sOGajQT-1xET8J5m4dPdaoo8gaOo3rQJDUYM_LAadDlIdJqn45s28WYE-W9q2zruuntjolVChIj2fAB4Pg"/>
+</div>
+</button>
+</section>
+</main>
+<!-- Bottom Navigation Bar (From Shared Components JSON) -->
+<!-- Applying PROHIBITION logic: Only show on top-level destination, Mobile only (hidden md:flex handled by hiding this entirely on md screens if we had a side nav, but we keep it here for mobile viewport priority). -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface-container-lowest shadow-[0_-4px_16px_rgba(0,0,0,0.06)] rounded-t-xl pb-[max(12px,env(safe-area-inset-bottom))] md:hidden border-t border-outline-variant/10">
+<!-- Active Tab: Home -->
+<button aria-current="page" class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-1.5 scale-90 duration-150 transform group">
+<span class="material-symbols-outlined text-[24px] mb-0.5" data-icon="home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-label-md font-label-md font-bold">Home</span>
+</button>
+<!-- Inactive Tabs -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high rounded-full transition-colors group">
+<span class="material-symbols-outlined text-[24px] mb-0.5 group-hover:-translate-y-0.5 transition-transform" data-icon="mic_none">mic_none</span>
+<span class="text-[10px] leading-[14px] font-medium mt-0.5">Ask Doubt</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high rounded-full transition-colors group">
+<span class="material-symbols-outlined text-[24px] mb-0.5 group-hover:-translate-y-0.5 transition-transform" data-icon="edit_square">edit_square</span>
+<span class="text-[10px] leading-[14px] font-medium mt-0.5">Practice</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high rounded-full transition-colors group">
+<span class="material-symbols-outlined text-[24px] mb-0.5 group-hover:-translate-y-0.5 transition-transform" data-icon="workspace_premium">workspace_premium</span>
+<span class="text-[10px] leading-[14px] font-medium mt-0.5">Scholarships</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high rounded-full transition-colors group">
+<span class="material-symbols-outlined text-[24px] mb-0.5 group-hover:-translate-y-0.5 transition-transform" data-icon="person">person</span>
+<span class="text-[10px] leading-[14px] font-medium mt-0.5">Profile</span>
+</button>
+</nav>
+</body></html>

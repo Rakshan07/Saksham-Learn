@@ -23,7 +23,7 @@ This repository contains the interactive prototype and design guidelines for the
 
 ## 🎨 Design System & Aesthetics
 
-Following the guidelines in [DESIGN.md](file:///c:/Users/raksh/OneDrive/Desktop/HACKATHON/DESIGN.md), the user interface is optimized for modern mobile devices:
+Following the guidelines in [DESIGN.md](DESIGN.md), the user interface is optimized for modern mobile devices:
 
 *   **Colors:**
     *   **Primary (Deep Blue):** `#00426d` — Instills trust and reliability.
@@ -36,9 +36,9 @@ Following the guidelines in [DESIGN.md](file:///c:/Users/raksh/OneDrive/Desktop/
 
 ## 📁 Repository Structure
 
-*   [code.html](file:///c:/Users/raksh/OneDrive/Desktop/HACKATHON/code.html): The core dashboard implementation with responsive Tailwind styling and embedded custom styles.
-*   [DESIGN.md](file:///c:/Users/raksh/OneDrive/Desktop/HACKATHON/DESIGN.md): Detailed specifications for brand, color palette, typography, layout, spacing, elevation, and component behaviors.
-*   [HACKATHON/README.md](file:///c:/Users/raksh/OneDrive/Desktop/HACKATHON/HACKATHON/README.md): This documentation file.
+*   [code.html](code.html): The core dashboard implementation with responsive Tailwind styling and embedded custom styles.
+*   [DESIGN.md](DESIGN.md): Detailed specifications for brand, color palette, typography, layout, spacing, elevation, and component behaviors.
+*   [README.md](README.md): This documentation file.
 
 ---
 
@@ -52,4 +52,4 @@ Following the guidelines in [DESIGN.md](file:///c:/Users/raksh/OneDrive/Desktop/
 
 ## 📖 How to Run
 
-Simply open [code.html](file:///c:/Users/raksh/OneDrive/Desktop/HACKATHON/code.html) in any modern web browser to view the interactive student dashboard prototype.
+Simply open [code.html](code.html) in any modern web browser to view the interactive student dashboard prototype.
