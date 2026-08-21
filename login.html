@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Saksham Learn - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #00426d;
+      --primary-light: #1e5a8a;
+      --secondary: #8e4e14;
+      --accent: #296292;
+      --surface: #f8f9ff;
+      --surface-low: #eef4ff;
+      --surface-card: #ffffff;
+      --on-surface: #121c28;
+      --on-surface-variant: #41474f;
+      --outline: #c1c7d0;
+      --error: #ba1a1a;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--surface);
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -120px; left: -120px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,66,109,0.12) 0%, transparent 70%);
+      animation: floatBlob 8s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -100px; right: -100px;
+      width: 350px; height: 350px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(142,78,20,0.10) 0%, transparent 70%);
+      animation: floatBlob 10s ease-in-out infinite alternate-reverse;
+      pointer-events: none;
+    }
+    @keyframes floatBlob {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(30px,20px) scale(1.1); }
+    }
+
+    .card {
+      background: var(--surface-card);
+      border-radius: 24px;
+      padding: 36px 28px 32px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 8px 40px rgba(0,66,109,0.10), 0 2px 8px rgba(0,0,0,0.06);
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(32px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .logo-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .logo-icon {
+      width: 64px; height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,66,109,0.25);
+    }
+    .logo-icon .material-symbols-outlined {
+      color: #fff;
+      font-size: 36px;
+      font-variation-settings: 'FILL' 1;
+    }
+    .logo-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+    .logo-sub {
+      font-size: 13px;
+      color: var(--on-surface-variant);
+      font-weight: 500;
+      margin-top: -4px;
+    }
+
+    .role-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 26px;
+    }
+    .role-tab {
+      border: 2px solid var(--outline);
+      background: var(--surface-low);
+      border-radius: 14px;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+      user-select: none;
+    }
+    .role-tab:hover { transform: translateY(-2px); }
+    .role-tab .tab-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    .role-tab[data-role="student"] .tab-icon { background: #e3f0fb; color: #00426d; }
+    .role-tab[data-role="teacher"] .tab-icon { background: #fff3e8; color: #8e4e14; }
+    .role-tab .tab-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--on-surface-variant);
+    }
+    .role-tab.active[data-role="student"] { border-color: #00426d; background: #e3f0fb; }
+    .role-tab.active[data-role="student"] .tab-label { color: #00426d; }
+    .role-tab.active[data-role="teacher"] { border-color: #8e4e14; background: #fff3e8; }
+    .role-tab.active[data-role="teacher"] .tab-label { color: #8e4e14; }
+    .role-tab.active { transform: scale(1.03); }
+
+    .form-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--on-surface);
+      margin-bottom: 18px;
+    }
+
+    .field-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .field-input-wrap { position: relative; display: flex; align-items: center; }
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--on-surface-variant);
+      font-size: 20px;
+      pointer-events: none;
+    }
+    .field input, .field select {
+      width: 100%;
+      border: 1.5px solid var(--outline);
+      border-radius: 12px;
+      padding: 13px 14px 13px 44px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--on-surface);
+      background: var(--surface-low);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .field select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2341474f' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(0,66,109,0.10);
+    }
+    .field input::placeholder { color: #aab; }
+    .field.error input, .field.error select { border-color: var(--error); box-shadow: 0 0 0 3px rgba(186,26,26,0.08); }
+    .field-error-msg { font-size: 12px; color: var(--error); font-weight: 500; display: none; }
+    .field.error .field-error-msg { display: block; }
+
+    .btn-submit {
+      width: 100%;
+      height: 52px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #00426d 0%, #296292 100%);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(0,66,109,0.22);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,66,109,0.28); }
+    .btn-submit:active { transform: scale(0.97); }
+    .btn-submit.teacher-mode { background: linear-gradient(135deg, #8e4e14 0%, #c0621a 100%); box-shadow: 0 4px 16px rgba(142,78,20,0.22); }
+
+    .login-footer { text-align: center; margin-top: 20px; font-size: 12px; color: var(--on-surface-variant); }
+    .login-footer strong { color: var(--primary); }
+
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a2e;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 1000;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo-area">
+      <div class="logo-icon">
+        <span class="material-symbols-outlined">school</span>
+      </div>
+      <div class="logo-title">Saksham Learn</div>
+      <div class="logo-sub">Empowering every learner</div>
+    </div>
+
+    <div class="role-tabs">
+      <div class="role-tab active" data-role="student" id="tab-student" onclick="selectRole('student')">
+        <div class="tab-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:24px;">person</span>
+        </div>
+        <span class="tab-label">I'm a Student</span>
+      </div>
+      <div class="role-tab" data-role="teacher" id="tab-teacher" onclick="selectRole('teacher')">
+        <div class="tab-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:24px;">school</span>
+        </div>
+        <span class="tab-label">I'm a Teacher</span>
+      </div>
+    </div>
+
+    <div class="form-title" id="form-title">✏️ Enter your details to continue</div>
+
+    <form id="login-form" novalidate>
+      <div class="field-group">
+
+        <div class="field" id="field-name">
+          <label for="input-name">Full Name</label>
+          <div class="field-input-wrap">
+            <span class="material-symbols-outlined field-icon">badge</span>
+            <input type="text" id="input-name" placeholder="e.g. Rohan Kumar" autocomplete="name"/>
+          </div>
+          <span class="field-error-msg">Please enter your name</span>
+        </div>
+
+        <div class="field" id="field-class" style="display:flex;">
+          <label for="input-class">Class / Grade</label>
+          <div class="field-input-wrap">
+            <span class="material-symbols-outlined field-icon">class</span>
+            <select id="input-class">
+              <option value="" disabled selected>Select your class</option>
+              <option value="6">Class 6</option>
+              <option value="7">Class 7</option>
+              <option value="8">Class 8</option>
+              <option value="9">Class 9</option>
+              <option value="10">Class 10</option>
+              <option value="11">Class 11</option>
+              <option value="12">Class 12</option>
+            </select>
+          </div>
+          <span class="field-error-msg">Please select your class</span>
+        </div>
+
+        <div class="field" id="field-subject" style="display:none;">
+          <label for="input-subject">Subject Taught</label>
+          <div class="field-input-wrap">
+            <span class="material-symbols-outlined field-icon">menu_book</span>
+            <select id="input-subject">
+              <option value="" disabled selected>Select your subject</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Science">Science</option>
+              <option value="English">English Language</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Social Science">Social Science</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <span class="field-error-msg">Please select your subject</span>
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn-submit" id="btn-submit">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">login</span>
+        <span id="btn-text">Enter as Student</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      Your details are saved <strong>only on this device</strong> — no account needed.
+    </div>
+  </div>
+
+  <div id="toast">Loading...</div>
+
+  <script>
+    let currentRole = 'student';
+
+    function selectRole(role) {
+      currentRole = role;
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + role).classList.add('active');
+
+      if (role === 'student') {
+        document.getElementById('field-class').style.display = 'flex';
+        document.getElementById('field-subject').style.display = 'none';
+        document.getElementById('btn-text').textContent = 'Enter as Student';
+        document.getElementById('btn-submit').classList.remove('teacher-mode');
+        document.getElementById('form-title').textContent = 'Enter your details to continue';
+      } else {
+        document.getElementById('field-class').style.display = 'none';
+        document.getElementById('field-subject').style.display = 'flex';
+        document.getElementById('btn-text').textContent = 'Enter as Teacher';
+        document.getElementById('btn-submit').classList.add('teacher-mode');
+        document.getElementById('form-title').textContent = 'Enter your teacher details';
+      }
+
+      document.querySelectorAll('.field').forEach(f => f.classList.remove('error'));
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('input-name').value.trim();
+      let valid = true;
+
+      const fieldName = document.getElementById('field-name');
+      if (!name) { fieldName.classList.add('error'); valid = false; }
+      else { fieldName.classList.remove('error'); }
+
+      if (currentRole === 'student') {
+        const classVal = document.getElementById('input-class').value;
+        const fieldClass = document.getElementById('field-class');
+        if (!classVal) { fieldClass.classList.add('error'); valid = false; }
+        else { fieldClass.classList.remove('error'); }
+        if (!valid) return;
+
+        localStorage.setItem('sakshamUser', JSON.stringify({
+          role: 'student', name, class: classVal, loginTime: new Date().toISOString()
+        }));
+        showToast('Welcome, ' + name + '! Loading your dashboard...');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+
+      } else {
+        const subject = document.getElementById('input-subject').value;
+        const fieldSubject = document.getElementById('field-subject');
+        if (!subject) { fieldSubject.classList.add('error'); valid = false; }
+        else { fieldSubject.classList.remove('error'); }
+        if (!valid) return;
+
+        localStorage.setItem('sakshamUser', JSON.stringify({
+          role: 'teacher', name, subject, loginTime: new Date().toISOString()
+        }));
+        showToast('Welcome, ' + name + '! Opening teacher dashboard...');
+        setTimeout(() => { window.location.href = 'teacher.html'; }, 1200);
+      }
+    });
+
+    document.getElementById('input-name').addEventListener('input', () => {
+      if (document.getElementById('input-name').value.trim())
+        document.getElementById('field-name').classList.remove('error');
+    });
+    document.getElementById('input-class').addEventListener('change', () => {
+      document.getElementById('field-class').classList.remove('error');
+    });
+    document.getElementById('input-subject').addEventListener('change', () => {
+      document.getElementById('field-subject').classList.remove('error');
+    });
+
+    // Skip login if already logged in
+    const existing = localStorage.getItem('sakshamUser');
+    if (existing) {
+      try {
+        const user = JSON.parse(existing);
+        if (user.role === 'teacher') window.location.href = 'teacher.html';
+        else window.location.href = 'index.html';
+      } catch(e) { localStorage.removeItem('sakshamUser'); }
+    }
+  </script>
+</body>
+</html>

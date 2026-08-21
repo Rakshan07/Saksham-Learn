@@ -123,6 +123,109 @@
             background: theme('colors.surface-variant');
             border-radius: theme('borderRadius.full');
         }
+
+        /* ── Doubt / AI Panel ──────────────────────────── */
+        #doubt-panel {
+            display: none;
+            flex-direction: column;
+            gap: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,66,109,0.10);
+        }
+        #doubt-panel.open { display: flex; }
+
+        .ai-response-box {
+            background: #fff;
+            border: 1.5px solid #c1c7d0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .ai-response-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #00426d 0%, #296292 100%);
+            color: #fff;
+        }
+        .ai-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .ai-response-label { font-weight: 700; font-size: 13px; }
+        .ai-response-sublabel { font-size: 11px; opacity: 0.75; margin-top: 1px; }
+
+        .ai-response-body {
+            padding: 16px;
+            font-size: 15px;
+            line-height: 1.65;
+            color: #121c28;
+            max-height: 420px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .ai-response-body p { margin-bottom: 10px; }
+        .ai-response-body p:last-child { margin-bottom: 0; }
+        .ai-response-body strong { font-weight: 700; }
+        .ai-response-body ul { padding-left: 20px; margin-bottom: 10px; }
+        .ai-response-body li { margin-bottom: 4px; }
+
+        /* Skeleton loading */
+        .skeleton-line {
+            height: 14px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #e8eef8 25%, #d0daf0 50%, #e8eef8 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+            margin-bottom: 10px;
+        }
+        .skeleton-line:last-child { width: 60%; margin-bottom: 0; }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Search bar active state */
+        #search-bar-section.active {
+            box-shadow: 0 4px 20px rgba(0,66,109,0.15);
+            border-color: rgba(0,66,109,0.3);
+        }
+
+        /* Mic recording pulse */
+        #mic-btn.recording {
+            background: #ba1a1a !important;
+            animation: micPulse 1s ease-in-out infinite alternate;
+        }
+        @keyframes micPulse {
+            from { box-shadow: 0 0 0 0 rgba(186,26,26,0.4); }
+            to   { box-shadow: 0 0 0 10px rgba(186,26,26,0); }
+        }
+
+        /* Suggestion chips */
+        .suggestion-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+        .chip {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1.5px solid #c1c7d0;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            color: #41474f;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .chip:hover { background: #eef4ff; border-color: #00426d; color: #00426d; transform: translateY(-1px); }
     </style>
 <style>
     body {
@@ -131,6 +234,17 @@
   </style>
   </head>
 <body class="bg-background text-on-surface antialiased min-h-screen flex flex-col relative selection:bg-primary-container selection:text-on-primary-container">
+<script>
+  // Auth guard - redirect to login if not logged in
+  (function() {
+    const user = localStorage.getItem('sakshamUser');
+    if (!user) { window.location.href = 'login.html'; return; }
+    try {
+      const u = JSON.parse(user);
+      if (u.role === 'teacher') { window.location.href = 'teacher.html'; return; }
+    } catch(e) { localStorage.removeItem('sakshamUser'); window.location.href = 'login.html'; }
+  })();
+</script>
 <!-- Top App Bar (From Shared Components JSON) -->
 <header class="flex justify-between items-center px-container-margin h-[64px] w-full fixed top-0 z-50 bg-surface border-b border-outline-variant shadow-sm transition-colors">
 <!-- Leading Action -->
@@ -140,17 +254,18 @@
 <!-- Headline -->
 <h1 class="text-headline-md font-headline-md font-bold text-primary truncate px-2">Saksham Learn</h1>
 <!-- Trailing Action -->
-<button class="px-2 h-[48px] flex items-center justify-center text-label-lg font-label-lg text-primary hover:bg-surface-container-low transition-colors rounded-full active:scale-95 duration-100 ease-in-out whitespace-nowrap">
-            EN/HI
-        </button>
+<button id="logout-btn" onclick="logoutUser()" class="px-3 h-[40px] flex items-center justify-center gap-1.5 text-label-lg font-label-lg text-primary hover:bg-surface-container-low transition-colors rounded-full active:scale-95 duration-100 ease-in-out whitespace-nowrap border border-outline-variant/40">
+  <span class="material-symbols-outlined text-[18px]">logout</span>
+  <span id="header-name" class="text-[13px] font-semibold">Logout</span>
+</button>
 </header>
 <!-- Main Content Canvas -->
 <main class="flex-1 pt-[80px] pb-[100px] px-container-margin w-full max-w-4xl mx-auto flex flex-col gap-[24px]">
 <!-- Greeting & Context Header -->
 <section class="flex justify-between items-end">
 <div>
-<p class="text-body-md font-body-md text-on-surface-variant">Good Morning,</p>
-<h2 class="text-headline-lg font-headline-lg text-on-surface">Rohan</h2>
+<p class="text-body-md font-body-md text-on-surface-variant" id="greeting-text">Good Morning,</p>
+<h2 class="text-headline-lg font-headline-lg text-on-surface" id="student-name">Student</h2>
 </div>
 <!-- Offline Indicator Badge (Educational Specialty) -->
 <div class="flex items-center gap-1.5 bg-surface-variant text-on-surface-variant px-3 py-1.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
@@ -159,14 +274,65 @@
 </div>
 </section>
 <!-- Prominent Voice Search Bar -->
-<section class="relative w-full shadow-[0_2px_8px_rgba(0,0,0,0.05)] rounded-full bg-surface-container-lowest border border-outline-variant/30 overflow-hidden flex items-center h-[56px] px-4 group hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300">
+<section id="search-bar-section" class="relative w-full shadow-[0_2px_8px_rgba(0,0,0,0.05)] rounded-full bg-surface-container-lowest border border-outline-variant/30 overflow-hidden flex items-center h-[56px] px-4 group hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300">
 <span class="material-symbols-outlined text-on-surface-variant mr-3 shrink-0" data-icon="search">search</span>
-<input class="flex-1 bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant/70 h-full w-full outline-none" placeholder="Ask a doubt or search topics..." type="text"/>
-<!-- Voice Input Button (Pulsing interaction cue) -->
-<button aria-label="Voice Search" class="w-[40px] h-[40px] rounded-full bg-primary-container text-on-primary-container flex items-center justify-center active:scale-90 transition-transform relative shrink-0">
-<span class="absolute inset-0 rounded-full bg-primary-container animate-ping opacity-40 duration-1000"></span>
-<span class="material-symbols-outlined relative z-10" data-icon="mic" data-weight="fill" style="font-variation-settings: 'FILL' 1;">mic</span>
+<input id="doubt-input" class="flex-1 bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant/70 h-full w-full outline-none" placeholder="Ask a doubt or search topics..." type="text" autocomplete="off"/>
+<!-- Send Button -->
+<button id="send-btn" aria-label="Ask Doubt" onclick="askDoubt()" class="w-[40px] h-[40px] rounded-full bg-primary-container text-on-primary-container flex items-center justify-center active:scale-90 transition-transform relative shrink-0 ml-1 opacity-0 pointer-events-none" style="transition: opacity 0.2s, transform 0.15s;">
+<span class="material-symbols-outlined relative z-10" style="font-variation-settings: 'FILL' 1; font-size:20px;">send</span>
 </button>
+<!-- Voice Input Button -->
+<button id="mic-btn" aria-label="Voice Search" onclick="startVoice()" class="w-[40px] h-[40px] rounded-full bg-primary-container text-on-primary-container flex items-center justify-center active:scale-90 transition-transform relative shrink-0 ml-1">
+<span class="absolute inset-0 rounded-full bg-primary-container animate-ping opacity-40 duration-1000"></span>
+<span class="material-symbols-outlined relative z-10" id="mic-icon" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+</section>
+
+<!-- Suggestion Chips -->
+<div class="suggestion-chips" id="suggestion-chips">
+  <button class="chip" onclick="fillDoubt('What is photosynthesis?')">💡 Photosynthesis</button>
+  <button class="chip" onclick="fillDoubt('Explain Pythagoras theorem')">📐 Pythagoras</button>
+  <button class="chip" onclick="fillDoubt('What is Newton\'s first law?')">🔬 Newton's Laws</button>
+  <button class="chip" onclick="fillDoubt('Difference between mitosis and meiosis')">🧬 Mitosis vs Meiosis</button>
+</div>
+
+<!-- AI Doubt Response Panel -->
+<section id="doubt-panel">
+  <div class="ai-response-box">
+    <!-- Header -->
+    <div class="ai-response-header">
+      <div class="ai-avatar">
+        <span class="material-symbols-outlined" style="font-size:18px; font-variation-settings:'FILL' 1;">smart_toy</span>
+      </div>
+      <div>
+        <div class="ai-response-label">Saksham AI Tutor</div>
+        <div class="ai-response-sublabel">Powered by Groq · LLaMA 3.3</div>
+      </div>
+      <button onclick="closeDoubt()" style="margin-left:auto; background:rgba(255,255,255,0.15); border:none; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff;">
+        <span class="material-symbols-outlined" style="font-size:16px;">close</span>
+      </button>
+    </div>
+    <!-- User question echo -->
+    <div id="doubt-question-echo" style="padding: 10px 16px 0; font-size:13px; font-weight:600; color:#41474f; display:none;">
+      <span style="color:#00426d;">You asked:</span> <span id="echo-text"></span>
+    </div>
+    <!-- Body -->
+    <div class="ai-response-body" id="ai-response-body">
+      <div class="skeleton-line" style="width:90%"></div>
+      <div class="skeleton-line" style="width:75%"></div>
+      <div class="skeleton-line" style="width:85%"></div>
+      <div class="skeleton-line"></div>
+    </div>
+    <!-- Footer actions -->
+    <div id="ai-response-footer" style="padding: 10px 16px 14px; display:none; gap:8px; flex-wrap:wrap;" class="flex">
+      <button onclick="copyAnswer()" style="display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:20px; border:1.5px solid #c1c7d0; background:none; font-size:12px; font-weight:600; color:#41474f; cursor:pointer; font-family:inherit; transition:all 0.15s;" onmouseover="this.style.background='#eef4ff'" onmouseout="this.style.background='none'">
+        <span class="material-symbols-outlined" style="font-size:14px;">content_copy</span> Copy
+      </button>
+      <button onclick="askFollowUp()" style="display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:20px; border:1.5px solid #c1c7d0; background:none; font-size:12px; font-weight:600; color:#41474f; cursor:pointer; font-family:inherit; transition:all 0.15s;" onmouseover="this.style.background='#eef4ff'" onmouseout="this.style.background='none'">
+        <span class="material-symbols-outlined" style="font-size:14px;">chat</span> Ask follow-up
+      </button>
+    </div>
+  </div>
 </section>
 <!-- Hero: Continue Learning Card (Level 2 Elevation) -->
 <section aria-label="Resume Grade 8 Math Fractions" class="bg-primary-container rounded-xl p-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] relative overflow-hidden flex flex-col gap-4 group cursor-pointer" role="button">
@@ -286,4 +452,255 @@
 <span class="text-[10px] leading-[14px] font-medium mt-0.5">Profile</span>
 </button>
 </nav>
+<script>
+  // Load user data and populate UI
+  (function() {
+    const raw = localStorage.getItem('sakshamUser');
+    if (!raw) return;
+    const user = JSON.parse(raw);
+    // Greeting by time
+    const hour = new Date().getHours();
+    let greet = 'Good Evening';
+    if (hour < 12) greet = 'Good Morning';
+    else if (hour < 17) greet = 'Good Afternoon';
+    document.getElementById('greeting-text').textContent = greet + ',';
+    // Student name (first name only)
+    const firstName = user.name ? user.name.split(' ')[0] : 'Student';
+    document.getElementById('student-name').textContent = user.name || 'Student';
+    document.getElementById('header-name').textContent = firstName;
+  })();
+
+  function logoutUser() {
+    if (confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem('sakshamUser');
+      window.location.href = 'login.html';
+    }
+  }
+
+  /* ── Groq Doubt Feature ─────────────────────────────── */
+  const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+  const GROQ_API_KEY = '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';
+  const GROQ_MODEL = 'llama-3.3-70b-versatile';
+  let conversationHistory = [];
+  let lastAnswer = '';
+
+  // Show/hide send button based on input
+  const doubtInput = document.getElementById('doubt-input');
+  const sendBtn = document.getElementById('send-btn');
+  doubtInput.addEventListener('input', () => {
+    const hasText = doubtInput.value.trim().length > 0;
+    sendBtn.style.opacity = hasText ? '1' : '0';
+    sendBtn.style.pointerEvents = hasText ? 'auto' : 'none';
+  });
+
+  // Press Enter to send
+  doubtInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && doubtInput.value.trim()) {
+      e.preventDefault();
+      askDoubt();
+    }
+  });
+
+  // Focus search bar from bottom nav
+  document.querySelector('[data-icon="mic_none"]')?.closest('button')?.addEventListener('click', () => {
+    doubtInput.focus();
+    doubtInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  function fillDoubt(text) {
+    doubtInput.value = text;
+    doubtInput.dispatchEvent(new Event('input'));
+    doubtInput.focus();
+  }
+
+  function closeDoubt() {
+    document.getElementById('doubt-panel').classList.remove('open');
+    document.getElementById('suggestion-chips').style.display = 'flex';
+    doubtInput.value = '';
+    sendBtn.style.opacity = '0';
+    sendBtn.style.pointerEvents = 'none';
+    conversationHistory = [];
+  }
+
+  function copyAnswer() {
+    if (lastAnswer) {
+      navigator.clipboard.writeText(lastAnswer).then(() => showToast('Answer copied!'));
+    }
+  }
+
+  function askFollowUp() {
+    doubtInput.focus();
+    doubtInput.value = '';
+    doubtInput.placeholder = 'Ask a follow-up question...';
+    doubtInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function showToast(msg) {
+    let t = document.getElementById('doubt-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'doubt-toast';
+      Object.assign(t.style, {
+        position:'fixed', bottom:'110px', left:'50%', transform:'translateX(-50%) translateY(60px)',
+        background:'#1a1a2e', color:'#fff', padding:'10px 18px', borderRadius:'12px',
+        fontSize:'13px', fontWeight:'600', zIndex:'9999',
+        transition:'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)', whiteSpace:'nowrap',
+        boxShadow:'0 4px 16px rgba(0,0,0,0.2)'
+      });
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    setTimeout(() => { t.style.transform = 'translateX(-50%) translateY(60px)'; }, 2200);
+  }
+
+  function formatResponse(text) {
+    // Convert markdown-ish text to clean HTML
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^\* (.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+      .replace(/\n{2,}/g, '</p><p>')
+      .replace(/^(?!<[ul])/gm, '')
+      .trim();
+  }
+
+  async function askDoubt() {
+    const question = doubtInput.value.trim();
+    if (!question) return;
+
+    // Get student context
+    let studentCtx = '';
+    try {
+      const u = JSON.parse(localStorage.getItem('sakshamUser') || '{}');
+      if (u.name && u.class) studentCtx = ` The student is in Class ${u.class}.`;
+    } catch(e) {}
+
+    // Show panel
+    const panel = document.getElementById('doubt-panel');
+    panel.classList.add('open');
+    document.getElementById('suggestion-chips').style.display = 'none';
+
+    // Echo the question
+    const echoEl = document.getElementById('doubt-question-echo');
+    document.getElementById('echo-text').textContent = question;
+    echoEl.style.display = 'block';
+
+    // Show skeleton
+    const body = document.getElementById('ai-response-body');
+    body.innerHTML = `
+      <div class="skeleton-line" style="width:90%"></div>
+      <div class="skeleton-line" style="width:75%"></div>
+      <div class="skeleton-line" style="width:85%"></div>
+      <div class="skeleton-line" style="width:55%"></div>
+    `;
+    document.getElementById('ai-response-footer').style.display = 'none';
+
+    // Scroll to panel
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Build system prompt
+    const systemPrompt = `You are Saksham AI Tutor, a friendly and encouraging educational assistant for Indian school students (Classes 6-12). You answer doubts in a clear, structured, step-by-step way. Use simple language, relatable examples, and where helpful, break answers into bullet points.${studentCtx} Always end with a short encouragement. Keep answers concise (max 200 words). Do NOT use markdown headers (##). Use **bold** for key terms.`;
+
+    // Add to conversation
+    conversationHistory.push({ role: 'user', content: question });
+
+    try {
+      const res = await fetch(GROQ_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...conversationHistory
+          ],
+          max_tokens: 400,
+          temperature: 0.7
+        })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData?.error?.message || 'Server error');
+      }
+
+      const data = await res.json();
+      const answer = data.choices?.[0]?.message?.content || 'Sorry, I could not get an answer. Please try again.';
+
+      // Save to history
+      conversationHistory.push({ role: 'assistant', content: answer });
+      lastAnswer = answer;
+
+      // Render answer with simple formatting
+      const formatted = formatResponse(answer);
+      body.innerHTML = `<p>${formatted}</p>`;
+      document.getElementById('ai-response-footer').style.display = 'flex';
+
+    } catch (err) {
+      const isOffline = !navigator.onLine;
+      body.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px 0; color:#ba1a1a; text-align:center;">
+          <span class="material-symbols-outlined" style="font-size:32px;">wifi_off</span>
+          <strong>${isOffline ? 'You are offline' : 'Could not reach AI server'}</strong>
+          <span style="font-size:13px; color:#41474f;">${isOffline ? 'Connect to internet and try again.' : 'Make sure the server is running: <code style="background:#f0f4ff;padding:2px 6px;border-radius:4px;">node server.js</code>'}</span>
+        </div>`;
+    }
+
+    // Clear input
+    doubtInput.value = '';
+    doubtInput.placeholder = 'Ask a follow-up question...';
+    sendBtn.style.opacity = '0';
+    sendBtn.style.pointerEvents = 'none';
+  }
+
+  /* ── Voice Input ──────────────────────────────────── */
+  let recognition = null;
+  function startVoice() {
+    const micBtn = document.getElementById('mic-btn');
+    const micIcon = document.getElementById('mic-icon');
+
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      showToast('🎤 Voice not supported in this browser');
+      return;
+    }
+
+    if (recognition && micBtn.classList.contains('recording')) {
+      recognition.stop();
+      micBtn.classList.remove('recording');
+      micIcon.textContent = 'mic';
+      return;
+    }
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRec();
+    recognition.lang = 'en-IN';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    micBtn.classList.add('recording');
+    micIcon.textContent = 'stop';
+    showToast('🎤 Listening... Speak your doubt');
+
+    recognition.onresult = (e) => {
+      const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+      doubtInput.value = transcript;
+      doubtInput.dispatchEvent(new Event('input'));
+    };
+    recognition.onend = () => {
+      micBtn.classList.remove('recording');
+      micIcon.textContent = 'mic';
+      if (doubtInput.value.trim()) setTimeout(() => askDoubt(), 400);
+    };
+    recognition.onerror = (e) => {
+      micBtn.classList.remove('recording');
+      micIcon.textContent = 'mic';
+      if (e.error !== 'aborted') showToast('Voice error: ' + e.error);
+    };
+    recognition.start();
+  }
+</script>
 </body></html>

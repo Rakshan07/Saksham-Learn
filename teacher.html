@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Saksham Learn - Teacher Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #fff8f2;
+      min-height: 100dvh;
+      color: #2a1a0a;
+    }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px;
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid #e8d5c4;
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 50;
+      box-shadow: 0 2px 8px rgba(142,78,20,0.06);
+    }
+    header h1 { font-size: 20px; font-weight: 800; color: #8e4e14; }
+    .logout-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 20px;
+      border: 1.5px solid #e8d5c4;
+      background: none; cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px; font-weight: 700; color: #8e4e14;
+      transition: background 0.15s;
+    }
+    .logout-btn:hover { background: #fff3e8; }
+
+    main {
+      padding: 84px 20px 40px;
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .welcome-card {
+      background: linear-gradient(135deg, #8e4e14 0%, #c0621a 100%);
+      border-radius: 20px;
+      padding: 28px 24px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(142,78,20,0.25);
+    }
+    .welcome-card::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .welcome-label { font-size: 13px; font-weight: 600; opacity: 0.8; margin-bottom: 4px; }
+    .welcome-name { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .welcome-subject { font-size: 14px; opacity: 0.75; font-weight: 500; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 12px; font-weight: 700;
+      margin-top: 14px;
+      backdrop-filter: blur(4px);
+    }
+
+    .section-title { font-size: 17px; font-weight: 800; color: #2a1a0a; margin-bottom: 2px; }
+
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px 16px;
+      border: 1.5px solid #e8d5c4;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stat-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: #fff3e8;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+      color: #8e4e14;
+    }
+    .stat-value { font-size: 26px; font-weight: 800; color: #8e4e14; }
+    .stat-label { font-size: 12px; color: #7a6050; font-weight: 600; margin-top: 2px; }
+
+    .action-list { display: flex; flex-direction: column; gap: 10px; }
+    .action-item {
+      display: flex; align-items: center; gap: 14px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      border: 1.5px solid #e8d5c4;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .action-item:hover { background: #fff3e8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(142,78,20,0.08); }
+    .action-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: #fff3e8; color: #8e4e14;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .action-info { flex: 1; }
+    .action-title { font-size: 15px; font-weight: 700; color: #2a1a0a; }
+    .action-desc { font-size: 12px; color: #7a6050; font-weight: 500; margin-top: 2px; }
+    .action-arrow { color: #c4a090; }
+  </style>
+</head>
+<body>
+<script>
+  (function() {
+    const raw = localStorage.getItem('sakshamUser');
+    if (!raw) { window.location.href = 'login.html'; return; }
+    try {
+      const u = JSON.parse(raw);
+      if (u.role !== 'teacher') { window.location.href = 'index.html'; return; }
+    } catch(e) { localStorage.removeItem('sakshamUser'); window.location.href = 'login.html'; }
+  })();
+</script>
+
+<header>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#8e4e14,#c0621a);display:flex;align-items:center;justify-content:center;">
+      <span class="material-symbols-outlined" style="color:#fff;font-size:20px;font-variation-settings:'FILL' 1;">school</span>
+    </div>
+    <h1>Saksham Learn</h1>
+  </div>
+  <button class="logout-btn" onclick="logoutUser()">
+    <span class="material-symbols-outlined" style="font-size:16px;">logout</span>
+    <span id="header-name">Logout</span>
+  </button>
+</header>
+
+<main>
+  <!-- Welcome Card -->
+  <div class="welcome-card">
+    <div class="welcome-label">Welcome back,</div>
+    <div class="welcome-name" id="teacher-name">Teacher</div>
+    <div class="welcome-subject" id="teacher-subject">Loading...</div>
+    <div class="badge">
+      <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">workspace_premium</span>
+      Teacher Dashboard
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div>
+    <div class="section-title">Overview</div>
+    <div style="margin-top:12px;" class="card-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">group</span>
+        </div>
+        <div class="stat-value">32</div>
+        <div class="stat-label">Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">assignment</span>
+        </div>
+        <div class="stat-value">8</div>
+        <div class="stat-label">Assignments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">pending_actions</span>
+        </div>
+        <div class="stat-value">5</div>
+        <div class="stat-label">Pending Reviews</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+        </div>
+        <div class="stat-value">4.8</div>
+        <div class="stat-label">Avg. Score</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div>
+    <div class="section-title">Quick Actions</div>
+    <div style="margin-top:12px;" class="action-list">
+      <div class="action-item">
+        <div class="action-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">edit_note</span>
+        </div>
+        <div class="action-info">
+          <div class="action-title">Create Assignment</div>
+          <div class="action-desc">Set new homework or quiz for students</div>
+        </div>
+        <span class="material-symbols-outlined action-arrow">chevron_right</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">grade</span>
+        </div>
+        <div class="action-info">
+          <div class="action-title">Review Submissions</div>
+          <div class="action-desc">5 assignments waiting for review</div>
+        </div>
+        <span class="material-symbols-outlined action-arrow">chevron_right</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">bar_chart</span>
+        </div>
+        <div class="action-info">
+          <div class="action-title">Student Progress</div>
+          <div class="action-desc">View class performance analytics</div>
+        </div>
+        <span class="material-symbols-outlined action-arrow">chevron_right</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">forum</span>
+        </div>
+        <div class="action-info">
+          <div class="action-title">Student Doubts</div>
+          <div class="action-desc">Answer questions from students</div>
+        </div>
+        <span class="material-symbols-outlined action-arrow">chevron_right</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  (function() {
+    const raw = localStorage.getItem('sakshamUser');
+    if (!raw) return;
+    const user = JSON.parse(raw);
+    document.getElementById('teacher-name').textContent = user.name || 'Teacher';
+    document.getElementById('teacher-subject').textContent = user.subject ? user.subject + ' Teacher' : 'Teacher';
+    const firstName = user.name ? user.name.split(' ')[0] : 'Teacher';
+    document.getElementById('header-name').textContent = firstName;
+  })();
+
+  function logoutUser() {
+    if (confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem('sakshamUser');
+      window.location.href = 'login.html';
+    }
+  }
+</script>
+</body>
+</html>
